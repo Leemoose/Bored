@@ -65,6 +65,35 @@ class FloorMap():
         else:
             return False
 
+class Loops(): 
+    def __init__(self):
+        self.action = True
+        self.inventory = False
+        self.update_screen = True
+
+    def action_loop(self, player, floormap, monster_ID, monster_map, item_ID, item_map):
+        if self.update_screen == True:
+            display.update_display(colors, floormap, tileDict, monster_ID, item_ID, monster_map, player)
+            self.update_screen = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            elif event.type == pygame.KEYDOWN:
+                keyboard.key_action(event, player, floormap, monster_ID, monster_map, item_ID, item_map, self)
+                self.update_screen = True
+        return True
+
+    def inventory_loop(self, keyboard, player):
+        if self.update_screen == True:
+            display.update_inventory(player)
+            self.update_screen = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            elif event.type == pygame.KEYDOWN:
+                keyboard.key_inventory(event, self, player)
+                self.update_screen = True
+        return True
 
 textSize = 32
 width = 100
@@ -75,6 +104,7 @@ colors = ColorDict()
 tileDict = M.TileDict(textSize, colors)
 monster_ID = ID()
 item_ID = ID()
+loop = Loops()
 
 generator = M.DungeonGenerator(width, height)
 generated_map = generator.get_map()
@@ -85,28 +115,25 @@ player = C.Player()
 
 orc = C.Monster(101, 3, 1)
 ax = I.Item(300, True, 2, 2)
+ax1 = I.Item(300, True, 4, 2)
 
 monster_ID.tag_subject(orc)
 item_ID.tag_subject(ax)
+item_ID.tag_subject(ax1)
 
 monster_map.place_thing(player, (player.x, player.y))
 monster_map.place_thing(orc, (orc.x, orc.y))
 item_map.place_thing(ax, (2, 2))
+item_map.place_thing(ax1, (4, 2))
 
 display = D.Display(floormap, screen_width, screen_height, textSize)
 keyboard = K.Keyboard()
 
-update = True
-yes = True
-while yes:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            yes = False
-        elif event.type == pygame.KEYDOWN:
-            keyboard.key_action(event, player, floormap, monster_ID, monster_map, item_ID, item_map)
-            update = True
-
-    if update == True:
-        display.update_display(colors, floormap, tileDict, monster_ID, item_ID, monster_map, player)
-        update = False
+player_turn = True
+while player_turn:
+    if loop.action == True:
+        player_turn = loop.action_loop(player, floormap, monster_ID, monster_map, item_ID, item_map)
+    elif loop.inventory == True:
+        player_turn = loop.inventory_loop(keyboard, player)
+    
                 

@@ -3,15 +3,15 @@ import dice as R
 
 class TileDict():
     def __init__(self, textSize, colors):
-        file = 'P.png'
+        file = 'assets/P.png'
         player_image = image.load(file)
-        basic_wall = image.load("basic_wall.png")
+        basic_wall = image.load("assets/basic_wall.png")
         tiles = {}
-        tiles[0] = image.load("basic_floor.png")
+        tiles[0] = image.load("assets/basic_floor.png")
         tiles[1] = basic_wall
         tiles[200] = player_image
-        tiles[101] = image.load("orc.png")
-        tiles[300] = image.load("basic_ax.png")
+        tiles[101] = image.load("assets/orc.png")
+        tiles[300] = image.load("assets/basic_ax.png")
         self.tiles = tiles
 
     def tile_string(self, key):

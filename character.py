@@ -1,11 +1,5 @@
 import random
-
-
-def roll_dice(number = 1, min_val = 1, max_val = 6):
-    dice = []
-    for i in range(number):
-        dice.append(random.randint(min_val, max_val))
-    return dice
+import dice as R
 
 class Character:
     def __init__(self, endurance = 0, intelligence = 0, dexterity = 0, strength = 0, speed = 100, health = 100, mana = 0):
@@ -18,7 +12,7 @@ class Character:
         self.mana = mana
         self.stored_movement = 0
         self.alive = True
-        self.inventory = {}
+        self.inventory = []
 
     def is_alive(self):
         if self.health <= 0:
@@ -34,11 +28,9 @@ class Character:
         x = monster.x + move_x
         y = monster.y - move_y
         if ((x>=0) & (y>=0) & (x < floormap.width) & (y < floormap.height)):
-
             if (monster_map.get_map()[x][y]) != 0:
                 defender = monsterID.get_subject(monster_map.get_map()[x][y])
                 monster.character.attack(monster, defender)
-
             else:
                 self.move(move_x, move_y, floormap, monster, monster_map)
 
@@ -60,21 +52,25 @@ class Character:
             monster_map.track_map[monster.x][monster.y] = monster.ID
 
     def attack(self, attacker, defender):
-        damage = roll_dice(1, 20)[0]
+        damage = R.roll_dice(1, 20)[0]
         defense = defender.character.defend()
         if damage - defense > 0:
             defender.character.take_damage(damage - defense)
 
     def defend(self):
-        defense = roll_dice(1, 6)
+        defense = R.roll_dice(1, 1)[0]
+        return defense
 
     def grab(self, player, item_map, item_ID):
         key = item_map.location(player.x,player.y)
         if key != 0:
             item = item_ID.get_subject(key)
-            self.inventory[key] = item
+            self.inventory.append(item)
             item = item_ID.remove_subject(key)
             item_map.clear_location(item.x, item.y)
+
+    def drop(self, player):
+        pass
 
 
 class Player:

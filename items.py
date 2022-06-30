@@ -4,6 +4,7 @@ class Item():
 	def __init__(self, number_tag, equipable, x, y):
 		self.equipable = equipable
 		self.number_tag = number_tag 
+		self.name = "Item"
 		self.x = x
 		self.y = y
 

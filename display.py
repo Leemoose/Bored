@@ -48,3 +48,16 @@ class Display():
             monsterID.subjects.pop(key)
 
         pygame.display.update()
+
+    def update_inventory(self, player):
+        font2 = pygame.font.SysFont('didot.ttc', 32)
+        inv = pygame.image.load("assets/inventory.png")
+        self.win.blit(inv, (128, 64))
+        for i, item in enumerate(player.character.inventory):
+            print(item)
+            text = font2.render(item.name, True, (0,255,0))
+            num = font2.render(str(i+1) + ".", True, (0,255,0))
+            self.win.blit(num, (132, 128 + 32 * i))
+            self.win.blit(text, (156, 128 + 32 * i))
+
+        pygame.display.update()
