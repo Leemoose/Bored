@@ -4,6 +4,7 @@ class Item():
     def __init__(self, number_tag, equipable, x, y):
         self.equipable = equipable
         self.number_tag = number_tag 
+        self.dropable = True
         self.name = "Item"
         self.x = x
         self.y = y
@@ -27,6 +28,6 @@ class Ax(Weapon):
         self.melee = True
 
     def attack(self):
-        damage = R.roll_dice(5, 20)[0]
+        damage = R.roll_dice(100, 200)[0]
         return damage
 

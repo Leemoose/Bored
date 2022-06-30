@@ -13,7 +13,7 @@ class Character:
         self.stored_movement = 0
         self.alive = True
         self.inventory = []
-        self.equipped = []
+        self.main_weapon = None
 
     def is_alive(self):
         if self.health <= 0:
@@ -53,10 +53,13 @@ class Character:
             monster_map.track_map[monster.x][monster.y] = monster.ID
 
     def attack(self, attacker, defender):
-        damage = R.roll_dice(1, 20)[0]
-        defense = defender.character.defend()
+        if self.main_weapon == None:
+            damage = R.roll_dice(1, 20)[0]
+        else:
+            damage = self.main_weapon.attack()
+        defense = defender.defend()
         if damage - defense > 0:
-            defender.character.take_damage(damage - defense)
+            defender.take_damage(damage - defense)
 
     def defend(self):
         defense = R.roll_dice(1, 1)[0]
@@ -67,18 +70,30 @@ class Character:
         if key != 0:
             item = item_ID.get_subject(key)
             self.inventory.append(item)
-            item = item_ID.remove_subject(key)
+            item_ID.remove_subject(key)
             item_map.clear_location(item.x, item.y)
 
     def drop(self, item_ID, item_map):
-        item = self.inventory.pop()
-        item_ID.add_subject(item.ID, item)
-        item_map.place_thing(item, (self.x, self.y))
-        item.x = self.x
-        item.y = self.y
+        if len(self.inventory) != 0 and self.inventory[-1].dropable == True:
+            item = self.inventory.pop()
+            item_ID.add_subject(item.ID, item)
+            item_map.place_thing(item, (self.x, self.y))
+            item.x = self.x
+            item.y = self.y
 
     def equip(self):
-        pass
+        if len(self.inventory) != 0:
+            item = self.inventory[-1]
+            self.main_weapon = item
+            item.dropable = False
+            item.name = "Main Weapon"
+
+    def unequip(self):
+        if self.main_weapon != None:
+            item = self.main_weapon
+            self.main_weapon = None
+            item.name = "Item"
+            item.dropable = True
 
 
 class Player(Character):

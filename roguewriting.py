@@ -1,5 +1,5 @@
 import sys, pygame, random
-import generated_map as M
+import mapping as M
 import display as D
 import keyboard as K
 import character as C
