@@ -34,7 +34,7 @@ class Display():
         dead_monsters = []
         for key in monsterID.subjects:
             monster = monsterID.get_subject(key)
-            if monster.character.is_alive():
+            if monster.is_alive():
                 if (monster.x >= x_start and monster.x < x_end and monster.y >= y_start and monster.y < y_end):
                     monster_tile = tileDict.tile_string(monster.get_number_tag())
                     self.win.blit(monster_tile, floormap.get_position(monster.x - x_start,monster.y - y_start))
@@ -53,8 +53,7 @@ class Display():
         font2 = pygame.font.SysFont('didot.ttc', 32)
         inv = pygame.image.load("assets/inventory.png")
         self.win.blit(inv, (128, 64))
-        for i, item in enumerate(player.character.inventory):
-            print(item)
+        for i, item in enumerate(player.inventory):
             text = font2.render(item.name, True, (0,255,0))
             num = font2.render(str(i+1) + ".", True, (0,255,0))
             self.win.blit(num, (132, 128 + 32 * i))

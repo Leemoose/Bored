@@ -13,6 +13,7 @@ class Character:
         self.stored_movement = 0
         self.alive = True
         self.inventory = []
+        self.equipped = []
 
     def is_alive(self):
         if self.health <= 0:
@@ -30,7 +31,7 @@ class Character:
         if ((x>=0) & (y>=0) & (x < floormap.width) & (y < floormap.height)):
             if (monster_map.get_map()[x][y]) != 0:
                 defender = monsterID.get_subject(monster_map.get_map()[x][y])
-                monster.character.attack(monster, defender)
+                monster.attack(monster, defender)
             else:
                 self.move(move_x, move_y, floormap, monster, monster_map)
 
@@ -69,17 +70,24 @@ class Character:
             item = item_ID.remove_subject(key)
             item_map.clear_location(item.x, item.y)
 
-    def drop(self, player):
+    def drop(self, item_ID, item_map):
+        item = self.inventory.pop()
+        item_ID.add_subject(item.ID, item)
+        item_map.place_thing(item, (self.x, self.y))
+        item.x = self.x
+        item.y = self.y
+
+    def equip(self):
         pass
 
 
-class Player:
+class Player(Character):
     def __init__(self):
+        super().__init__()
         self.x = 2
         self.y = 1
         self.symbol = "@"
         self.number_tag = 200
-        self.character = Character()
         self.ID = 1
 
     def gain_ID(self, ID):
@@ -88,12 +96,12 @@ class Player:
     def get_number_tag(self):
         return self.number_tag
 
-class Monster:
+class Monster(Character):
     def __init__(self, number_tag, x, y):
+        super().__init__()
         self.x = x
         self.y = y
         self.number_tag = number_tag
-        self.character = Character()
         self.ID = 0
 
     def gain_ID(self, ID):

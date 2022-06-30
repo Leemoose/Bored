@@ -9,6 +9,7 @@ class Keyboard():
         keys_to_string[pygame.K_d] = "d"
         keys_to_string[pygame.K_i] = "i"
         keys_to_string[pygame.K_g] = "g"
+        keys_to_string[pygame.K_e] = "e"
         keys_to_string[pygame.K_ESCAPE] = "esc"
         self.keys_to_string = keys_to_string
 
@@ -19,28 +20,31 @@ class Keyboard():
         try: 
             key = self.key_string(event.key)
             if key == "w":
-                player.character.attack_move(0, 1, floormap, player, monsterID, monster_map, item_ID)
+                player.attack_move(0, 1, floormap, player, monsterID, monster_map, item_ID)
             elif key == "a":
-                player.character.attack_move(-1, 0, floormap, player, monsterID, monster_map, item_ID)
+                player.attack_move(-1, 0, floormap, player, monsterID, monster_map, item_ID)
             elif key == "s":
-                player.character.attack_move(0, -1, floormap, player, monsterID, monster_map, item_ID)
+                player.attack_move(0, -1, floormap, player, monsterID, monster_map, item_ID)
             elif key == "d":
-                player.character.attack_move(1, 0, floormap, player, monsterID, monster_map, item_ID)
+                player.attack_move(1, 0, floormap, player, monsterID, monster_map, item_ID)
             elif key == "g":
-                player.character.grab(player, item_map, item_ID)
+                player.grab(player, item_map, item_ID)
             elif key == "i":
                 loop.action = False
                 loop.inventory = True
                 loop.update_screen = True
         except:
+            print("Wrong key")
             return
 
-    def key_inventory(self, event, loop, player):
-        try:
+    def key_inventory(self, event, loop, player, item_ID, item_map):
             key = self.key_string(event.key)
             if key == "esc":
                 loop.inventory = False
                 loop.action = True
                 loop.update_screen = True
-        except:
-            pass
+            elif key == "d":
+                player.drop(item_ID, item_map)
+                loop.update_screen = False
+            elif key == "e":
+                player.equip()

@@ -38,6 +38,9 @@ class ID():
     def remove_subject(self, key):
         self.subjects.pop(key)
 
+    def add_subject(self, key, subject):
+        self.subjects[key] = subject
+
 class FloorMap():
     def __init__(self, textSize, generated_map, width, height):
         self.blockSize = textSize
@@ -83,7 +86,7 @@ class Loops():
                 self.update_screen = True
         return True
 
-    def inventory_loop(self, keyboard, player):
+    def inventory_loop(self, keyboard, player, item_ID, item_map):
         if self.update_screen == True:
             display.update_inventory(player)
             self.update_screen = False
@@ -91,7 +94,7 @@ class Loops():
             if event.type == pygame.QUIT:
                 return False
             elif event.type == pygame.KEYDOWN:
-                keyboard.key_inventory(event, self, player)
+                keyboard.key_inventory(event, self, player, item_ID, item_map)
                 self.update_screen = True
         return True
 
@@ -111,11 +114,12 @@ generated_map = generator.get_map()
 floormap = FloorMap(textSize, generated_map, width, height)
 monster_map = M.TrackingMap(width, height)
 item_map = M.TrackingMap(width, height)
+
 player = C.Player()
 
 orc = C.Monster(101, 3, 1)
-ax = I.Item(300, True, 2, 2)
-ax1 = I.Item(300, True, 4, 2)
+ax = I.Ax(300, True, 2, 2)
+ax1 = I.Ax(300, True, 4, 2)
 
 monster_ID.tag_subject(orc)
 item_ID.tag_subject(ax)
@@ -134,6 +138,6 @@ while player_turn:
     if loop.action == True:
         player_turn = loop.action_loop(player, floormap, monster_ID, monster_map, item_ID, item_map)
     elif loop.inventory == True:
-        player_turn = loop.inventory_loop(keyboard, player)
+        player_turn = loop.inventory_loop(keyboard, player, item_ID, item_map)
     
                 
