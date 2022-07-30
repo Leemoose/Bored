@@ -12,13 +12,13 @@ class Keyboard():
         keys_to_string[pygame.K_u] = "u"
         keys_to_string[pygame.K_e] = "e"
         keys_to_string[pygame.K_ESCAPE] = "esc"
+        keys_to_string[pygame.K_1] = "1"
         self.keys_to_string = keys_to_string
 
     def key_string(self, key):
         return self.keys_to_string[key]
 
-    def key_action(self, event, player, floormap, monsterID, monster_map, item_ID, item_map, loop):
-            key = self.key_string(event.key)
+    def key_action(self, event, player, floormap, monsterID, monster_map, item_ID, item_map, loop, key):
             if key == "w":
                 player.attack_move(0, 1, floormap, player, monsterID, monster_map, item_ID)
             elif key == "a":
@@ -34,8 +34,7 @@ class Keyboard():
                 loop.inventory = True
                 loop.update_screen = True
 
-    def key_inventory(self, event, loop, player, item_ID, item_map):
-            key = self.key_string(event.key)
+    def key_inventory(self, event, loop, player, item_ID, item_map, key):
             if key == "esc":
                 loop.inventory = False
                 loop.action = True
@@ -47,3 +46,15 @@ class Keyboard():
                 player.equip()
             elif key == "u":
                 player.unequip()
+
+    def key_main_screen(self, key, loop):
+        if key == "1":
+            loop.main = False
+            loop.race = True
+            loop.update_screen = True
+
+    def key_race_screen(self, key, loop):
+        if key == "1":
+            loop.race = False
+            loop.action = True
+            loop.update_screen = True

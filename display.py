@@ -1,17 +1,48 @@
 import pygame
 
+
+class Buttons():
+    def __init__(self):
+        self.buttons = {}
+
+    def add(self, button, name):
+        self.buttons[name] = button
+
+class Button():
+    def __init__(self, width, height, asset, modx, mody, action, positionx, positiony):
+        self.width = width * modx
+        self.height = height * mody
+        self.modx = modx
+        self.mody = mody
+        self.img = pygame.transform.scale(pygame.image.load("assets/button.png"),(self.width, self.height))
+        self.action = action
+        self.positionx = positionx
+        self.positiony = positiony
+
+    def scale(self, screen_width, screen_height):
+        self.img = pygame.transform.scale(self.img, (screen_width * self.modx, screen_height * self.mody))
+
+    def clicked(self, x, y):
+        pressed = False
+        if self.positionx < x and x < self.positionx + self.width:
+            return (self.positionx < x and x < self.positionx + self.width) and (self.positiony < y and y < self.positiony + self.height)
+
+
+
 class Display():
-    def __init__(self, floormap, width, height, textSize):
+    def __init__(self, floormap, width, height, textSize, textWidth, textHeight):
         pygame.display.set_caption('Tiles')
-        self.win = pygame.display.set_mode(floormap.get_position(width,height))
+        self.win = pygame.display.set_mode((width, height))
         self.screen_width = width
         self.screen_height = height
+        self.textWidth = textWidth
+        self.textHeight = textHeight
         self.textSize = textSize
 
     def update_display(self, colorDict, floormap, tileDict, monsterID, item_ID, monster_map, player):
         self.win.fill(colorDict.getColor("black"))
-        r_x = self.screen_width // 2
-        r_y = self.screen_height // 2
+        r_x = self.textWidth // 2
+        r_y = self.textHeight // 2
         x_start = player.x - r_x
         x_end = player.x + r_x
         y_start = player.y - r_y
@@ -47,7 +78,7 @@ class Display():
         for key in dead_monsters:
             monsterID.subjects.pop(key)
 
-        pygame.display.update()
+
 
     def update_inventory(self, player):
         font2 = pygame.font.SysFont('didot.ttc', 32)
@@ -59,4 +90,52 @@ class Display():
             self.win.blit(num, (132, 128 + 32 * i))
             self.win.blit(text, (156, 128 + 32 * i))
 
-        pygame.display.update()
+
+
+    def update_main(self):
+        main_background = pygame.image.load("assets/main_screen.png")
+        main_background = pygame.transform.scale(main_background, (self.screen_width, self.screen_height))
+        self.win.blit(main_background, (0,0))
+
+        
+
+    def update_race(self):
+        race_background = pygame.image.load("assets/race_screen.png")
+        race_background = pygame.transform.scale(race_background, (self.screen_width, self.screen_height))
+        self.win.blit(race_background, (0,0))
+
+
+def create_main_screen(scr):
+    background = pygame.image.load("assets/homescreen.png")
+    background = pygame.transform.scale(background, (scr.screen_width, scr.screen_height))
+    scr.win.blit(background, (0,0))
+
+    buttons = Buttons()
+    button = Button(scr.screen_width, scr.screen_height, "assets/button.png", 15/100, 11/100, "1", scr.screen_width / 2 - scr.screen_width*15/200, scr.screen_height * 85/100)
+    buttons.add(button, "Play!")
+    scr.win.blit(button.img, (button.positionx, button.positiony))
+
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render('Play!', True, (255, 255, 255))
+    text_width, text_height = font.size("Play!")
+    scr.win.blit(text, (scr.screen_width / 2 - text_width / 2, scr.screen_height * 85/100 + button.height / 2 - text_height / 2))
+
+    pygame.image.save(scr.win, "assets/main_screen.png")
+    return buttons
+
+def create_race_screen(scr):
+    background = pygame.image.load("assets/race_background.png")
+    background = pygame.transform.scale(background, (scr.screen_width, scr.screen_height))
+    scr.win.blit(background, (0,0))
+    buttons = Buttons()
+    button = Button(scr.screen_width, scr.screen_height, "assets/button.png", 15/100, 11/100, "1", scr.screen_width / 2 - scr.screen_width*15/200, scr.screen_height * 85/100)
+    buttons.add(button, "Human")
+    scr.win.blit(button.img, (button.positionx, button.positiony))
+
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render('Human', True, (255, 255, 255))
+    text_width, text_height = font.size("Human")
+    scr.win.blit(text, (scr.screen_width / 2 - text_width / 2, scr.screen_height * 85/100 + button.height / 2 - text_height / 2))
+
+    pygame.image.save(scr.win, "assets/race_screen.png")
+    return buttons
