@@ -18,19 +18,17 @@ textHeight = int(height / textSize)
 
 colors = L.ColorDict()
 tileDict = M.TileDict(textSize, colors)
-monster_ID = L.ID()
-item_ID = L.ID()
 loop = L.Loops(width, height, textSize)
 
 
 
-#orc = C.Monster(101, 3, 1)
+
 #ax = I.Ax(300, True, 2, 2)
-#ax1 = I.Ax(300, True, 4, 2)
+#ax1 = I.Ax(300, True, 4, 2)wd
 
 #monster_ID.tag_subject(orc)
-#item_ID.tag_subject(ax)
-#item_ID.tag_subject(ax1)
+#item_ID.tag_subject(ax)d
+#item_ID.tag_subject(ax1)image.load("assets/basic_ax.png")
 
 #monster_map.place_thing(orc)
 #item_map.place_thing(ax, (2, 2))
@@ -43,5 +41,5 @@ player_turn = True
 loop.init_game(display)
 while player_turn:
     if loop.update_screen == True:
-        loop.change_screen(monster_ID, item_ID, keyboard, display, colors, tileDict)
-    player_turn = loop.action_loop(monster_ID, item_ID, keyboard)
+        loop.change_screen(keyboard, display, colors, tileDict)
+    player_turn = loop.action_loop(keyboard)

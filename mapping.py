@@ -38,11 +38,13 @@ class DungeonGenerator():
 
         rooms = R.roll_square_rooms(0, self.width, 1, 4, 0, self.height, 3, 20, 30)
         for room in rooms:
-            startx = room[0]
-            starty = room[1]
+            startx1 = room[0]
+            starty2 = room[1]
             length = room[2]
             depth = room[3]
             self.square_room(startx, starty, length, depth)
+        
+ #       self.square_room(startx, starty, startx1 - startx, 1)
 
         rooms = R.roll_square_rooms(0, self.width, 3, 20, 0, self.height, 1, 4, 30)
         for room in rooms:
@@ -56,8 +58,9 @@ class DungeonGenerator():
     def square_room(self, startx, starty, length, depth):
         for x in range(length):
             for y in range(depth):
-                tile = O.Tile(x, y, 0, True)
-                self.map_tile[x][y] = tile
+                if startx + x >= 0 and startx + x < self.width and starty+y >= 0 and starty + y < self.height:
+                    tile = O.Tile(startx + x, starty + y, 0, True)
+                    self.map_tile[startx + x][starty + y] = tile
 
     def get_map(self):
         return self.map_tile
@@ -102,6 +105,6 @@ class TileMap(TrackingMap):
 
     def get_passable(self, x, y, monster_map):
         if ((x>=0) & (y>=0) & (x < self.width) & (y < self.height)):
-            return ((self.tile_map[x][y].passable) & (monster_map.locate(x,y) == 0))
+            return (self.tile_map[x][y].passable)# & (monster_map.locate(x,y) == 0))
         else:
             return False

@@ -32,7 +32,7 @@ class Character():
         if ((x>=0) & (y>=0) & (x < floormap.width) & (y < floormap.height)):
             if (monster_map.track_map[x][y]) != 0:
                 defender = monsterID.get_subject(monster_map.track_map[x][y])
-                monster.attack(monster, defender)
+                self.attack(defender)
             else:
                 self.move(move_x, move_y, floormap, monster, monster_map)
 
@@ -53,14 +53,14 @@ class Character():
                 spaces -= 1
             monster_map.track_map[monster.x][monster.y] = monster.id_tag
 
-    def attack(self, attacker, defender):
+    def attack(self, defender):
         if self.main_weapon == None:
             damage = R.roll_dice(1, 20)[0]
         else:
             damage = self.main_weapon.attack()
-        defense = defender.defend()
+        defense = defender.character.defend()
         if damage - defense > 0:
-            defender.take_damage(damage - defense)
+            defender.character.take_damage(damage - defense)
 
     def defend(self):
         defense = R.roll_dice(1, 1)[0]
@@ -103,16 +103,7 @@ class Player(O.Objects):
         self.character = Character()
 
 
-class Monster(Character):
+class Monster(O.Objects):
     def __init__(self, number_tag, x, y):
-        super().__init__()
-        self.x = x
-        self.y = y
-        self.number_tag = number_tag
-        self.ID = 0
-
-    def gain_ID(self, ID):
-        self.ID = ID
-
-    def get_number_tag(self):
-        return self.number_tag
+        super().__init__(x, y, 0, number_tag, "Player")
+        self.character = Character()

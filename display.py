@@ -1,4 +1,5 @@
 import pygame
+from pygame import image
 
 
 class Buttons():
@@ -60,16 +61,19 @@ class Display():
         for key in item_ID.subjects:
             item = item_ID.get_subject(key)
             if (item.x >= x_start and item.x < x_end and item.y >= y_start and item.y < y_end):
-                item_tile = tileDict.tile_string(item.get_number_tag())
-                self.win.blit(item_tile, (item.x - x_start, item.y - y_start))
+                item_tile = tileDict.tile_string(item.render_tag)
+    
+                self.win.blit(image.load("assets/basic_ax.png"), (self.textSize * (item.x - x_start), self.textSize * (item.y - y_start)))
+
 
         dead_monsters = []
         for key in monsterID.subjects:
             monster = monsterID.get_subject(key)
-            if monster.is_alive():
+            if monster.character.is_alive():
                 if (monster.x >= x_start and monster.x < x_end and monster.y >= y_start and monster.y < y_end):
-                    monster_tile = tileDict.tile_string(monster.get_number_tag())
-                    self.win.blit(monster_tile, (monster.x - x_start, monster.y - y_start))
+
+                    monster_tile = tileDict.tile_string(monster.render_tag)
+                    self.win.blit(monster_tile, (self.textSize*(monster.x - x_start), self.textSize*(monster.y - y_start)))
             else:
                 dead_monsters.append(key)
                 monster_map.clear_location(monster.x, monster.y)
@@ -79,18 +83,15 @@ class Display():
         for key in dead_monsters:
             monsterID.subjects.pop(key)
 
-
-
     def update_inventory(self, player):
         font2 = pygame.font.SysFont('didot.ttc', 32)
         inv = pygame.image.load("assets/inventory.png")
         self.win.blit(inv, (128, 64))
-        for i, item in enumerate(player.inventory):
+        for i, item in enumerate(player.character.inventory):
             text = font2.render(item.name, True, (0,255,0))
             num = font2.render(str(i+1) + ".", True, (0,255,0))
             self.win.blit(num, (132, 128 + 32 * i))
             self.win.blit(text, (156, 128 + 32 * i))
-
 
 
     def update_main(self):

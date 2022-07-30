@@ -2,6 +2,8 @@ import pygame
 import display as D
 import mapping as M
 import character as C
+import items as I
+import random
 
 class ColorDict():
     #Just a dictionary of colors that I decide to use
@@ -46,8 +48,10 @@ class Loops():
         self.width = width
         self.height = height
         self.textSize = textSize
+        self.monster_dict = ID()
+        self.item_dict = ID()
 
-    def action_loop(self, monster_ID, item_ID, keyboard):
+    def action_loop(self, keyboard):
         action = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -55,9 +59,9 @@ class Loops():
             elif event.type == pygame.KEYDOWN:
                 key = keyboard.key_string(event.key)
                 if self.action == True:
-                    keyboard.key_action(event, self.player, self.tile_map, monster_ID, self.monster_map, item_ID, self.item_map, self, key)
+                    keyboard.key_action(event, self.player, self.tile_map, self.monster_dict, self.monster_map, self.item_dict, self.item_map, self, key)
                 elif self.inventory == True:
-                    keyboard.key_inventory(event, self, self.player, item_ID, self.item_map, key)
+                    keyboard.key_inventory(event, self, self.player, self.item_dict, self.item_map, key)
                 elif self.main == True:
                     keyboard.key_main_screen(key, self)
                 elif self.race == True:
@@ -89,9 +93,9 @@ class Loops():
                 self.update_screen = True
         return True
 
-    def change_screen(self, monster_ID, item_ID, keyboard, display, colors, tileDict):
+    def change_screen(self,  keyboard, display, colors, tileDict):
         if self.action == True:
-            display.update_display(colors, self.tile_map, tileDict, monster_ID, item_ID, self.monster_map, self.player)
+            display.update_display(colors, self.tile_map, tileDict, self.monster_dict, self.item_dict, self.monster_map, self.player)
         elif self.inventory == True:
             display.update_inventory(self.player)
         elif self.main == True:
@@ -109,12 +113,47 @@ class Loops():
         self.class_buttons = D.create_class_screen(display)
 
     def start_game(self):
-        wid = self.width // self.textSize
-        hei = self.height // self.textSize
+        wid = 60
+        hei = 60
         generator = M.DungeonGenerator(wid, hei)
         generated_map = generator.get_map()
         self.tile_map = M.TileMap(wid, hei, generated_map)
         self.monster_map = M.TrackingMap(wid, hei)
         self.item_map = M.TrackingMap(wid, hei)
-        self.player = C.Player(0, 0)
+        startx = random.randint(0, wid-1)
+        starty = random.randint(0,hei-1)
+        while (self.tile_map.tile_map[startx][starty].passable == False):
+            startx = random.randint(0, wid-1)
+            starty = random.randint(0,hei-1)
+        self.player = C.Player(startx, starty)
         self.monster_map.place_thing(self.player)
+
+        ax = I.Ax(300, True, startx, starty)
+        self.item_dict.tag_subject(ax)
+        self.item_map.place_thing(ax)  
+        
+        number_of_orcs = random.randint(20, 30)
+        for i in range(number_of_orcs):
+            startx = random.randint(0, wid-1)
+            starty = random.randint(0,hei-1)
+
+            while (self.tile_map.tile_map[startx][starty].passable == False):
+                startx = random.randint(0, wid-1)
+                starty = random.randint(0,hei-1)
+
+            orc = C.Monster(101, startx, starty)
+            self.monster_dict.tag_subject(orc)
+            self.monster_map.place_thing(orc)
+
+        number_of_axes = random.randint(15,20)
+        for i in range(number_of_axes):
+            startx = random.randint(0, wid-1)
+            starty = random.randint(0,hei-1)
+
+            while (self.tile_map.tile_map[startx][starty].passable == False):
+                startx = random.randint(0, wid-1)
+                starty = random.randint(0,hei-1)
+
+            ax = I.Ax(300, True, startx, starty)
+            self.item_dict.tag_subject(ax)
+            self.item_map.place_thing(ax)        
