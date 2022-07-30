@@ -56,5 +56,11 @@ class Keyboard():
     def key_race_screen(self, key, loop):
         if key == "1":
             loop.race = False
+            loop.classes = True
+            loop.update_screen = True
+
+    def key_class_screen(self, key, loop):
+        if key == "1":
+            loop.classes = False
             loop.action = True
             loop.update_screen = True

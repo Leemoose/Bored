@@ -33,33 +33,6 @@ class ID():
     def add_subject(self, key, subject):
         self.subjects[key] = subject
 
-class FloorMap():
-    def __init__(self, textSize, generated_map, width, height):
-        self.blockSize = textSize
-        self.width = width
-        self.height = height
-        self.size = (self.width, self.height)
-        self.map_tile = generated_map
-
-    def __str__(self):
-        allrows = ""
-        for x in range(self.width):
-            row = ' '.join(self.get_tile(self.map_tile[x][y]) for y in range(self.height))
-            allrows = allrows + row + "\n"      
-        return allrows
-
-    def get_position(self, x, y):
-        return(x*self.blockSize, y*self.blockSize)
-
-    def get_tag(self, x, y):
-        return self.map_tile[x][y].number_tag
-
-    def get_passable(self, x, y, monster_map):
-        if ((x>=0) & (y>=0) & (x < self.width) & (y < self.height)):
-            return ((self.map_tile[x][y].passable) & (monster_map.location(x,y) == 0))
-        else:
-            return False
-
 class Loops(): 
     def __init__(self):
         self.action = False
@@ -67,6 +40,7 @@ class Loops():
         self.race = False
         self.update_screen = True
         self.main = True
+        self.classes = False
         self.main_buttons = None
 
     def action_loop(self, player, floormap, monster_ID, monster_map, item_ID, item_map, keyboard):
@@ -85,6 +59,7 @@ class Loops():
                 elif self.race == True:
                     keyboard.key_race_screen(key, self)
                 self.update_screen = True
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 x,y = pygame.mouse.get_pos()
                 if self.main == True:
@@ -100,6 +75,14 @@ class Loops():
                             key = self.race_buttons.buttons[button].action
                         break
                     keyboard.key_race_screen(key, self)
+
+                elif self.classes == True:
+                    for button in self.class_buttons.buttons:
+                        if self.class_buttons.buttons[button].clicked(x, y):
+                            key = self.class_buttons.buttons[button].action
+                        break
+                    keyboard.key_class_screen(key, self)
+                self.update_screen = True
         return True
 
     def change_screen(self, player, floormap, monster_ID, monster_map, item_ID, item_map, keyboard, display, colors, tileDict):
@@ -111,9 +94,12 @@ class Loops():
             display.update_main()
         elif self.race == True:
             display.update_race()
+        elif self.classes == True:
+            display.update_class()
         pygame.display.update()
         self.update_screen = False
 
     def start_game(self, display):
         self.main_buttons = D.create_main_screen(display)
         self.race_buttons = D.create_race_screen(display)
+        self.class_buttons = D.create_class_screen(display)

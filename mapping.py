@@ -68,20 +68,21 @@ class DungeonGenerator():
     def get_map(self):
         return self.map_tile
 
-class TrackingMap():
+class Maps():
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.track_map = [x[:] for x in [[0] * self.width] * self.height]
 
-    def place_thing(self, thing, location):
-        self.track_map[location[0]][location[1]] = thing.ID
-
-    def get_map(self):
-        return self.track_map
-
-    def location(self, x, y):
+    def locate(self, x, y):
         return self.track_map[x][y]
+
+class TrackingMap(Maps):
+    def __init__(self, width, height):
+        super().__init__(width, height)
+
+    def place_thing(self, thing):
+        self.track_map[thing.x][thing.y] = thing.ID
 
     def clear_location(self, x, y):
         self.track_map[x][y] = 0
@@ -92,3 +93,28 @@ class TrackingMap():
             row = ' '.join(str(self.track_map[x][y]) for y in range(self.height))
             allrows = allrows + row + "\n"      
         return allrows
+
+
+class TileMap(Maps):
+    def __init__(self, width, height, generated_map):
+        super().__init__(width, height)
+        self.map_tile = generated_map
+
+    def __str__(self):
+        allrows = ""
+        for x in range(self.width):
+            row = ' '.join(self.get_tile(self.map_tile[x][y]) for y in range(self.height))
+            allrows = allrows + row + "\n"      
+        return allrows
+
+#    def get_position(self, x, y):
+ #       return(x*self.blockSize, y*self.blockSize)
+
+    def get_tag(self, x, y):
+        return self.map_tile[x][y].number_tag
+
+    def get_passable(self, x, y, monster_map):
+        if ((x>=0) & (y>=0) & (x < self.width) & (y < self.height)):
+            return ((self.map_tile[x][y].passable) & (monster_map.locate(x,y) == 0))
+        else:
+            return False

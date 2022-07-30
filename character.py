@@ -29,8 +29,8 @@ class Character:
         x = monster.x + move_x
         y = monster.y - move_y
         if ((x>=0) & (y>=0) & (x < floormap.width) & (y < floormap.height)):
-            if (monster_map.get_map()[x][y]) != 0:
-                defender = monsterID.get_subject(monster_map.get_map()[x][y])
+            if (monster_map.track_map[x][y]) != 0:
+                defender = monsterID.get_subject(monster_map.track_map[x][y])
                 monster.attack(monster, defender)
             else:
                 self.move(move_x, move_y, floormap, monster, monster_map)

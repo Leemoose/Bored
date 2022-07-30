@@ -54,7 +54,7 @@ class Display():
                     pass
                 else:
                     tag = tileDict.tile_string(floormap.get_tag(x,y))
-                    self.win.blit(tag, floormap.get_position(x - x_start,y - y_start))
+                    self.win.blit(tag, (self.textSize* (x - x_start), self.textSize * (y - y_start)))
 
         for key in item_ID.subjects:
             item = item_ID.get_subject(key)
@@ -73,7 +73,7 @@ class Display():
                 dead_monsters.append(key)
                 monster_map.clear_location(monster.x, monster.y)
 
-        self.win.blit(tileDict.tile_string(200), floormap.get_position(r_x, r_y))
+        self.win.blit(tileDict.tile_string(200), (self.screen_width // 2 - self.textSize // 2, self.screen_height // 2 - self.textSize // 2))
 
         for key in dead_monsters:
             monsterID.subjects.pop(key)
@@ -103,6 +103,11 @@ class Display():
         race_background = pygame.image.load("assets/race_screen.png")
         race_background = pygame.transform.scale(race_background, (self.screen_width, self.screen_height))
         self.win.blit(race_background, (0,0))
+
+    def update_class(self):
+        class_background = pygame.image.load("assets/class_screen.png")
+        class_background = pygame.transform.scale(class_background, (self.screen_width, self.screen_height))
+        self.win.blit(class_background, (0,0))
 
 
 def create_main_screen(scr):
@@ -138,4 +143,21 @@ def create_race_screen(scr):
     scr.win.blit(text, (scr.screen_width / 2 - text_width / 2, scr.screen_height * 85/100 + button.height / 2 - text_height / 2))
 
     pygame.image.save(scr.win, "assets/race_screen.png")
+    return buttons
+
+def create_class_screen(scr):
+    background = pygame.image.load("assets/class_background.png")
+    background = pygame.transform.scale(background, (scr.screen_width, scr.screen_height))
+    scr.win.blit(background, (0,0))
+    buttons = Buttons()
+    button = Button(scr.screen_width, scr.screen_height, "assets/button.png", 15/100, 11/100, "1", scr.screen_width / 2 - scr.screen_width*15/200, scr.screen_height * 85/100)
+    buttons.add(button, "Warrior")
+    scr.win.blit(button.img, (button.positionx, button.positiony))
+
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render('Warrior', True, (255, 255, 255))
+    text_width, text_height = font.size("Warrior")
+    scr.win.blit(text, (scr.screen_width / 2 - text_width / 2, scr.screen_height * 85/100 + button.height / 2 - text_height / 2))
+
+    pygame.image.save(scr.win, "assets/class_screen.png")
     return buttons

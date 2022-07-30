@@ -11,7 +11,6 @@ pygame.init()
 pygame.font.init()
 
 
-
 textSize = 32
 width = 1280
 height = 720
@@ -26,24 +25,24 @@ loop = L.Loops()
 
 generator = M.DungeonGenerator(width, height)
 generated_map = generator.get_map()
-floormap = L.FloorMap(textSize, generated_map, width, height)
+floormap = M.TileMap(width, height, generated_map)
 monster_map = M.TrackingMap(width, height)
 item_map = M.TrackingMap(width, height)
 
 player = C.Player()
 
-orc = C.Monster(101, 3, 1)
-ax = I.Ax(300, True, 2, 2)
-ax1 = I.Ax(300, True, 4, 2)
+#orc = C.Monster(101, 3, 1)
+#ax = I.Ax(300, True, 2, 2)
+#ax1 = I.Ax(300, True, 4, 2)
 
-monster_ID.tag_subject(orc)
-item_ID.tag_subject(ax)
-item_ID.tag_subject(ax1)
+#monster_ID.tag_subject(orc)
+#item_ID.tag_subject(ax)
+#item_ID.tag_subject(ax1)
 
-monster_map.place_thing(player, (player.x, player.y))
-monster_map.place_thing(orc, (orc.x, orc.y))
-item_map.place_thing(ax, (2, 2))
-item_map.place_thing(ax1, (4, 2))
+monster_map.place_thing(player)
+#monster_map.place_thing(orc)
+#item_map.place_thing(ax, (2, 2))
+#item_map.place_thing(ax1, (4, 2))
 
 display = D.Display(floormap, width, height, textSize, textWidth, textHeight)
 keyboard = K.Keyboard()
