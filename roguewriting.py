@@ -2,7 +2,6 @@ import sys, pygame, random
 import mapping as M
 import display as D
 import keyboard as K
-import character as C
 import items as I
 import loops as L
 
@@ -21,15 +20,9 @@ colors = L.ColorDict()
 tileDict = M.TileDict(textSize, colors)
 monster_ID = L.ID()
 item_ID = L.ID()
-loop = L.Loops()
+loop = L.Loops(width, height, textSize)
 
-generator = M.DungeonGenerator(width, height)
-generated_map = generator.get_map()
-floormap = M.TileMap(width, height, generated_map)
-monster_map = M.TrackingMap(width, height)
-item_map = M.TrackingMap(width, height)
 
-player = C.Player()
 
 #orc = C.Monster(101, 3, 1)
 #ax = I.Ax(300, True, 2, 2)
@@ -39,17 +32,16 @@ player = C.Player()
 #item_ID.tag_subject(ax)
 #item_ID.tag_subject(ax1)
 
-monster_map.place_thing(player)
 #monster_map.place_thing(orc)
 #item_map.place_thing(ax, (2, 2))
 #item_map.place_thing(ax1, (4, 2))
 
-display = D.Display(floormap, width, height, textSize, textWidth, textHeight)
+display = D.Display(width, height, textSize, textWidth, textHeight)
 keyboard = K.Keyboard()
 
 player_turn = True
-loop.start_game(display)
+loop.init_game(display)
 while player_turn:
     if loop.update_screen == True:
-        loop.change_screen(player, floormap, monster_ID, monster_map, item_ID, item_map, keyboard, display, colors, tileDict)
-    player_turn = loop.action_loop(player, floormap, monster_ID, monster_map, item_ID, item_map, keyboard)
+        loop.change_screen(monster_ID, item_ID, keyboard, display, colors, tileDict)
+    player_turn = loop.action_loop(monster_ID, item_ID, keyboard)

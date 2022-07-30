@@ -1,5 +1,6 @@
 from pygame import image
 import dice as R
+import objects as O
 
 class TileDict():
     def __init__(self, textSize, colors):
@@ -17,13 +18,6 @@ class TileDict():
     def tile_string(self, key):
         return self.tiles[key]
 
-class Tile():
-    def __init__(self, x, y, number_tag = 0, passable = False):
-        self.passable = passable
-        self.number_tag = number_tag
-        self.x = x
-        self.y = y
-
 class DungeonGenerator():
     #Generates a width by height 2d array of tiles. Each type of tile has a unique tile
     #tag ranging from 0 to 99
@@ -32,7 +26,7 @@ class DungeonGenerator():
         self.height = height
         self.map_tile = []
         for x in range(self.width):
-            self.map_tile.append([Tile(x, y, 1, False) for y in range(self.height)])
+            self.map_tile.append([O.Tile(x, y, 1, False) for y in range(self.height)])
         
         rooms = R.roll_square_rooms(0, self.width, 3, 20, 0, self.height, 3, 20, 5)
         for room in rooms:
@@ -62,7 +56,7 @@ class DungeonGenerator():
     def square_room(self, startx, starty, length, depth):
         for x in range(length):
             for y in range(depth):
-                tile = Tile(x, y, 0, True)
+                tile = O.Tile(x, y, 0, True)
                 self.map_tile[x][y] = tile
 
     def get_map(self):
@@ -82,7 +76,7 @@ class TrackingMap(Maps):
         super().__init__(width, height)
 
     def place_thing(self, thing):
-        self.track_map[thing.x][thing.y] = thing.ID
+        self.track_map[thing.x][thing.y] = thing.id_tag
 
     def clear_location(self, x, y):
         self.track_map[x][y] = 0
@@ -95,26 +89,19 @@ class TrackingMap(Maps):
         return allrows
 
 
-class TileMap(Maps):
+class TileMap(TrackingMap):
     def __init__(self, width, height, generated_map):
         super().__init__(width, height)
-        self.map_tile = generated_map
-
-    def __str__(self):
-        allrows = ""
-        for x in range(self.width):
-            row = ' '.join(self.get_tile(self.map_tile[x][y]) for y in range(self.height))
-            allrows = allrows + row + "\n"      
-        return allrows
-
-#    def get_position(self, x, y):
- #       return(x*self.blockSize, y*self.blockSize)
+        self.tile_map = generated_map
 
     def get_tag(self, x, y):
-        return self.map_tile[x][y].number_tag
+        return self.tile_map[x][y].render_tag
+
+    def place_tile(self, tile):
+        self.tile_map[tile.x][tile.y] = tile
 
     def get_passable(self, x, y, monster_map):
         if ((x>=0) & (y>=0) & (x < self.width) & (y < self.height)):
-            return ((self.map_tile[x][y].passable) & (monster_map.locate(x,y) == 0))
+            return ((self.tile_map[x][y].passable) & (monster_map.locate(x,y) == 0))
         else:
             return False

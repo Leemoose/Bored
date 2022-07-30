@@ -30,7 +30,7 @@ class Button():
 
 
 class Display():
-    def __init__(self, floormap, width, height, textSize, textWidth, textHeight):
+    def __init__(self, width, height, textSize, textWidth, textHeight):
         pygame.display.set_caption('Tiles')
         self.win = pygame.display.set_mode((width, height))
         self.screen_width = width
@@ -43,6 +43,7 @@ class Display():
         self.win.fill(colorDict.getColor("black"))
         r_x = self.textWidth // 2
         r_y = self.textHeight // 2
+
         x_start = player.x - r_x
         x_end = player.x + r_x
         y_start = player.y - r_y
@@ -54,13 +55,13 @@ class Display():
                     pass
                 else:
                     tag = tileDict.tile_string(floormap.get_tag(x,y))
-                    self.win.blit(tag, (self.textSize* (x - x_start), self.textSize * (y - y_start)))
+                    self.win.blit(tag, (self.textSize * (x - x_start), self.textSize * (y - y_start)))
 
         for key in item_ID.subjects:
             item = item_ID.get_subject(key)
             if (item.x >= x_start and item.x < x_end and item.y >= y_start and item.y < y_end):
                 item_tile = tileDict.tile_string(item.get_number_tag())
-                self.win.blit(item_tile, floormap.get_position(item.x - x_start,item.y - y_start))
+                self.win.blit(item_tile, (item.x - x_start, item.y - y_start))
 
         dead_monsters = []
         for key in monsterID.subjects:
@@ -68,12 +69,12 @@ class Display():
             if monster.is_alive():
                 if (monster.x >= x_start and monster.x < x_end and monster.y >= y_start and monster.y < y_end):
                     monster_tile = tileDict.tile_string(monster.get_number_tag())
-                    self.win.blit(monster_tile, floormap.get_position(monster.x - x_start,monster.y - y_start))
+                    self.win.blit(monster_tile, (monster.x - x_start, monster.y - y_start))
             else:
                 dead_monsters.append(key)
                 monster_map.clear_location(monster.x, monster.y)
 
-        self.win.blit(tileDict.tile_string(200), (self.screen_width // 2 - self.textSize // 2, self.screen_height // 2 - self.textSize // 2))
+        self.win.blit(tileDict.tile_string(200), (r_x * self.textSize, r_y * self.textSize))
 
         for key in dead_monsters:
             monsterID.subjects.pop(key)

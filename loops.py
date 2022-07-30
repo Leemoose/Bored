@@ -1,5 +1,7 @@
 import pygame
 import display as D
+import mapping as M
+import character as C
 
 class ColorDict():
     #Just a dictionary of colors that I decide to use
@@ -34,16 +36,18 @@ class ID():
         self.subjects[key] = subject
 
 class Loops(): 
-    def __init__(self):
+    def __init__(self, width, height, textSize):
         self.action = False
         self.inventory = False
         self.race = False
         self.update_screen = True
         self.main = True
         self.classes = False
-        self.main_buttons = None
+        self.width = width
+        self.height = height
+        self.textSize = textSize
 
-    def action_loop(self, player, floormap, monster_ID, monster_map, item_ID, item_map, keyboard):
+    def action_loop(self, monster_ID, item_ID, keyboard):
         action = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -51,9 +55,9 @@ class Loops():
             elif event.type == pygame.KEYDOWN:
                 key = keyboard.key_string(event.key)
                 if self.action == True:
-                    keyboard.key_action(event, player, floormap, monster_ID, monster_map, item_ID, item_map, self, key)
+                    keyboard.key_action(event, self.player, self.tile_map, monster_ID, self.monster_map, item_ID, self.item_map, self, key)
                 elif self.inventory == True:
-                    keyboard.key_inventory(event, self, player, item_ID, item_map, key)
+                    keyboard.key_inventory(event, self, self.player, item_ID, self.item_map, key)
                 elif self.main == True:
                     keyboard.key_main_screen(key, self)
                 elif self.race == True:
@@ -66,30 +70,30 @@ class Loops():
                     for button in self.main_buttons.buttons:
                         if self.main_buttons.buttons[button].clicked(x, y):
                             key = self.main_buttons.buttons[button].action
-                        break
-                    keyboard.key_main_screen(key, self)
+                            keyboard.key_main_screen(key, self)
+                            break
 
                 elif self.race == True:
                     for button in self.race_buttons.buttons:
                         if self.race_buttons.buttons[button].clicked(x, y):
                             key = self.race_buttons.buttons[button].action
-                        break
-                    keyboard.key_race_screen(key, self)
+                            keyboard.key_race_screen(key, self)
+                            break
 
                 elif self.classes == True:
                     for button in self.class_buttons.buttons:
                         if self.class_buttons.buttons[button].clicked(x, y):
                             key = self.class_buttons.buttons[button].action
-                        break
-                    keyboard.key_class_screen(key, self)
+                            keyboard.key_class_screen(key, self)
+                            break
                 self.update_screen = True
         return True
 
-    def change_screen(self, player, floormap, monster_ID, monster_map, item_ID, item_map, keyboard, display, colors, tileDict):
+    def change_screen(self, monster_ID, item_ID, keyboard, display, colors, tileDict):
         if self.action == True:
-            display.update_display(colors, floormap, tileDict, monster_ID, item_ID, monster_map, player)
+            display.update_display(colors, self.tile_map, tileDict, monster_ID, item_ID, self.monster_map, self.player)
         elif self.inventory == True:
-            display.update_inventory(player)
+            display.update_inventory(self.player)
         elif self.main == True:
             display.update_main()
         elif self.race == True:
@@ -99,7 +103,18 @@ class Loops():
         pygame.display.update()
         self.update_screen = False
 
-    def start_game(self, display):
+    def init_game(self, display):
         self.main_buttons = D.create_main_screen(display)
         self.race_buttons = D.create_race_screen(display)
         self.class_buttons = D.create_class_screen(display)
+
+    def start_game(self):
+        wid = self.width // self.textSize
+        hei = self.height // self.textSize
+        generator = M.DungeonGenerator(wid, hei)
+        generated_map = generator.get_map()
+        self.tile_map = M.TileMap(wid, hei, generated_map)
+        self.monster_map = M.TrackingMap(wid, hei)
+        self.item_map = M.TrackingMap(wid, hei)
+        self.player = C.Player(0, 0)
+        self.monster_map.place_thing(self.player)

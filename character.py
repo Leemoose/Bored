@@ -1,7 +1,8 @@
 import random
 import dice as R
+import objects as O
 
-class Character:
+class Character():
     def __init__(self, endurance = 0, intelligence = 0, dexterity = 0, strength = 0, speed = 100, health = 100, mana = 0):
         self.endurance = endurance
         self.intelligence = intelligence
@@ -50,7 +51,7 @@ class Character:
                 monster.y -= move_y
                 monster.x += move_x
                 spaces -= 1
-            monster_map.track_map[monster.x][monster.y] = monster.ID
+            monster_map.track_map[monster.x][monster.y] = monster.id_tag
 
     def attack(self, attacker, defender):
         if self.main_weapon == None:
@@ -96,20 +97,11 @@ class Character:
             item.dropable = True
 
 
-class Player(Character):
-    def __init__(self):
-        super().__init__()
-        self.x = 2
-        self.y = 1
-        self.symbol = "@"
-        self.number_tag = 200
-        self.ID = 1
+class Player(O.Objects):
+    def __init__(self, x, y):
+        super().__init__(x, y, 1, 200, "Player")
+        self.character = Character()
 
-    def gain_ID(self, ID):
-        self.ID = ID
-
-    def get_number_tag(self):
-        return self.number_tag
 
 class Monster(Character):
     def __init__(self, number_tag, x, y):
