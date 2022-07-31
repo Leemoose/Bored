@@ -66,6 +66,8 @@ class Loops():
                     keyboard.key_main_screen(key, self)
                 elif self.race == True:
                     keyboard.key_race_screen(key, self)
+                elif self.classes == True:
+                    keyboard.key_class_screen(key, self)
                 self.update_screen = True
 
             elif event.type == pygame.MOUSEBUTTONUP:

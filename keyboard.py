@@ -40,7 +40,7 @@ class Keyboard():
                 loop.action = True
                 loop.update_screen = True
             elif key == "d":
-                player.character.drop(item_ID, item_map)
+                player.character.drop(item_ID, item_map, player.x, player.y)
                 loop.update_screen = False
             elif key == "e":
                 player.character.equip()

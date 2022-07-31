@@ -67,20 +67,21 @@ class Character():
         return defense
 
     def grab(self, player, item_map, item_ID):
-        key = item_map.location(player.x,player.y)
+        key = item_map.locate(player.x,player.y)
         if key != 0:
             item = item_ID.get_subject(key)
             self.inventory.append(item)
             item_ID.remove_subject(key)
             item_map.clear_location(item.x, item.y)
 
-    def drop(self, item_ID, item_map):
+    def drop(self, item_ID, item_map, x, y):
         if len(self.inventory) != 0 and self.inventory[-1].dropable == True:
             item = self.inventory.pop()
-            item_ID.add_subject(item.ID, item)
-            item_map.place_thing(item, (self.x, self.y))
-            item.x = self.x
-            item.y = self.y
+            item_ID.add_subject(item.id_tag, item)
+            item.x = x
+            item.y = y
+            item_map.place_thing(item)
+
 
     def equip(self):
         if len(self.inventory) != 0:
