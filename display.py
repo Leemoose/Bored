@@ -111,6 +111,13 @@ class Display():
         class_background = pygame.transform.scale(class_background, (self.screen_width, self.screen_height))
         self.win.blit(class_background, (0,0))
 
+    def update_item(self, item):
+        item_background = pygame.image.load("assets/item_background.png")
+        item_background = pygame.transform.scale(item_background, (self.screen_width // 2, self.screen_height // 2))
+        self.win.blit(item_background, (self.screen_width // 4, self.screen_height // 4))
+
+        self.win.blit(image.load("assets/basic_ax.png"), (self.screen_width // 2, self.screen_height // 2))
+
 
 def create_main_screen(scr):
     background = pygame.image.load("assets/homescreen.png")

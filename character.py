@@ -74,13 +74,17 @@ class Character():
             item_ID.remove_subject(key)
             item_map.clear_location(item.x, item.y)
 
-    def drop(self, item_ID, item_map, x, y):
-        if len(self.inventory) != 0 and self.inventory[-1].dropable == True:
-            item = self.inventory.pop()
-            item_ID.add_subject(item.id_tag, item)
-            item.x = x
-            item.y = y
-            item_map.place_thing(item)
+    def drop(self, id_tag, item_dict, x, y, item_map):
+        if len(self.inventory) != 0:
+            i = 0
+            while self.inventory[i].id_tag != id_tag and i < len(self.inventory):
+                i += 1
+            if i < len(self.inventory):
+                item = self.inventory.pop(i)
+                item_dict.add_subject(item)
+                item.x = x
+                item.y = y
+                item_map.place_thing(item)
 
 
     def equip(self):

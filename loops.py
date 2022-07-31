@@ -34,8 +34,8 @@ class ID():
     def remove_subject(self, key):
         self.subjects.pop(key)
 
-    def add_subject(self, key, subject):
-        self.subjects[key] = subject
+    def add_subject(self, subject):
+        self.subjects[subject.id_tag] = subject
 
 class Loops(): 
     def __init__(self, width, height, textSize):
@@ -48,8 +48,10 @@ class Loops():
         self.width = width
         self.height = height
         self.textSize = textSize
+        self.items = False
         self.monster_dict = ID()
         self.item_dict = ID()
+        self.item_for_item_screen = None
 
     def action_loop(self, keyboard):
         action = None
@@ -57,17 +59,22 @@ class Loops():
             if event.type == pygame.QUIT:
                 return False
             elif event.type == pygame.KEYDOWN:
-                key = keyboard.key_string(event.key)
+                try:
+                    key = keyboard.key_string(event.key)
+                except:
+                    break
                 if self.action == True:
-                    keyboard.key_action(event, self.player, self.tile_map, self.monster_dict, self.monster_map, self.item_dict, self.item_map, self, key)
+                    keyboard.key_action(self.player, self.tile_map, self.monster_dict, self.monster_map, self.item_dict, self.item_map, self, key)
                 elif self.inventory == True:
-                    keyboard.key_inventory(event, self, self.player, self.item_dict, self.item_map, key)
+                    keyboard.key_inventory(self, self.player, self.item_dict, self.item_map, key)
                 elif self.main == True:
                     keyboard.key_main_screen(key, self)
                 elif self.race == True:
                     keyboard.key_race_screen(key, self)
                 elif self.classes == True:
                     keyboard.key_class_screen(key, self)
+                elif self.items == True:
+                    keyboard.key_item_screen(key, self, self.item_dict, self.item_map, self.player, self.item_for_item_screen)
                 self.update_screen = True
 
             elif event.type == pygame.MOUSEBUTTONUP:
@@ -106,6 +113,8 @@ class Loops():
             display.update_race()
         elif self.classes == True:
             display.update_class()
+        elif self.items == True:
+            display.update_item(self.item_for_item_screen)
         pygame.display.update()
         self.update_screen = False
 
